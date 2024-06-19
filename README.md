@@ -1,6 +1,4 @@
-# certbun [Deprecated]
-
-Please note, this module is now in deprecated status. It is provided as-is as an example of how to use the Porkbun API to download and install a SSL certificate, but is no longer maintained.
+# certbun
 
 Porkbun's minimalist Certbot alternative leaves the certificate generation to Porkbun and simply downloads certs to the location of your choosing, then reloads your web server with the command of your choosing.
 
@@ -12,20 +10,22 @@ We recommend [manually downloading the certificate bundle](https://kb.porkbun.co
 
 ## Installation 
 
- 1. Install Python if it's not already installed. This client is Python 2-compatible so it should run out of the box on MacOS and many Linux distributions. If you're running Windows, you should download the most recent production Python version.
+ 1. Install Python if it's not already installed. If you're running Windows, you should download the most recent production Python version.
  2. Download and uncompress certbun to the folder of your choice
  3. Install the *requests* library:
  	`pip install requests`
  4. Rename config.json.example to config.json and paste in your generated API and Secret keys. Save the config file. If you haven't yet generated the keys, check out our [Getting Started Guide.](https://kb.porkbun.com/article/190-getting-started-with-the-porkbun-dns-api) 
  5. Configure the config file's **domain**
 field with the domain you wish to pull certs from.
-6. Configure the config file's  **domainCertLocation**, **privateKeyLocation**, **intermediateCertLocation**, and **publicKeyLocation** fields with where you want the retrieved certificates to be saved. If your web server doesn't need the intermediate cert and public key, you can specify /dev/null as the filename.
-7. Configure the config file's **commandToReloadWebserver** field with the command you typically execute to get your web server to load the new certificate bundle. This command will run immediately after the files have been copied into place. I usually use `/sbin/service nginx reload` on Amazon Linux VPS instances I administer, but the command will vary depending on your web server and operating system.
+6. Configure the config file's  **domainCertLocation**, **privateKeyLocation**, **intermediateCertLocation**, and **publicKeyLocation** fields with where you want the retrieved certificates to be saved. If your web server doesn't need the intermediate cert and public key, you can leave it blank.
+7. Configure the config file's **commandToReloadWebserver** field with the command you typically execute to get your web server to load the new certificate bundle. This command will run immediately after the files have been copied into place. You can also leave this blank.
 
 
 ## Running the client
 
     python certbun.py /path/to/config.json 
+
+Will default to using the config.json file in the same directory as the script.
 
 ### Add it to cron
 Since this client works in a fairly non-sophisticated way, you probably just want to download certs every week or so and restart your web server. 
