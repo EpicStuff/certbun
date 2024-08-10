@@ -15,7 +15,7 @@ def main(config):
 	print()
 
 	# write stuff
-	for key, val in {'domainCertLocation': 'certificatechain', 'privateKeyLocation': 'privatekey', 'privateKeyLocation': 'publickey', 'intermediateCertLocation': 'intermediatecertificate'}.items():
+	for key, val in {'domainCertLocation': 'certificatechain', 'privateKeyLocation': 'privatekey', 'publicKeyLocation': 'publickey', 'intermediateCertLocation': 'intermediatecertificate'}.items():
 		if not config[key]:
 			continue
 		print('Installing', config[key])
@@ -23,8 +23,14 @@ def main(config):
 			os.mkdir(os.path.dirname(config[key]))
 		except FileExistsError:
 			pass
+		if __debug__:
+			print('Writing', val, 'to', config[key])
+		os.system(f'rm -f {config[key]}')
 		with open(config[key], 'w') as f:
 			f.write(records[val])
+
+		# set permissions
+		os.chmod(config[key], 0o444)
 
 	# run command
 	if config['commandToReloadWebserver']:
