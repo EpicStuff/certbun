@@ -1,15 +1,18 @@
-import json, requests, sys, os
+import json, os, sys
+from pathlib import Path
+
+import requests
 
 
 def main(config):
 	# read config
 	print('Reading', config, 'for configuration')
-	with open(config, 'r') as f:
+	with open(config, 'r', encoding='utf8') as f:
 		config = json.load(f)
 
 	# "download" stuff
-	print('Downloading certs for', config['domain']);
-	records = json.loads(requests.post(config['endpoint'] + '/ssl/retrieve/' + config['domain'], data = json.dumps(config)).text)
+	print('Downloading certs for', config['domain'])
+	records = json.loads(requests.post(config['endpoint'] + '/ssl/retrieve/' + config['domain'], data=json.dumps(config)).text)
 	assert records['status'] != 'ERROR', 'Error retrieving SSL.\n' + records['message']
 
 	print()
@@ -19,14 +22,11 @@ def main(config):
 		if not config[key]:
 			continue
 		print('Installing', config[key])
-		try:
-			os.mkdir(os.path.dirname(config[key]))
-		except FileExistsError:
-			pass
+		Path(os.path.dirname(config[key])).mkdir(parents=True, exist_ok=True)
 		if __debug__:
 			print('Writing', val, 'to', config[key])
 		os.system(f'rm -f {config[key]}')
-		with open(config[key], 'w') as f:
+		with open(config[key], 'w', encoding='utf8') as f:
 			f.write(records[val])
 
 		# set permissions
@@ -35,8 +35,8 @@ def main(config):
 	# run command
 	if config['commandToReloadWebserver']:
 		print('', 'Executing system command:', config['commandToReloadWebserver'], '', sep='\n')
-		commandOutput=os.popen(config['commandToReloadWebserver']).read()		
-		print(commandOutput)	
+		command_output = os.popen(config['commandToReloadWebserver']).read()
+		print(command_output)
 
 
 if __name__ == '__main__':
