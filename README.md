@@ -1,3 +1,6 @@
+# Note:
+I would recommend taking a look at https://github.com/infinityofspace/certbot_dns_porkbun instead.
+
 # certbun
 
 Porkbun's minimalist Certbot alternative leaves the certificate generation to Porkbun and simply downloads certs to the location of your choosing, then reloads your web server with the command of your choosing.
